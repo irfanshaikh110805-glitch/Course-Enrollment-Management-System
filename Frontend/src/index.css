@@ -1,0 +1,191 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+:root {
+    --sidebar-bg: #0f172a;
+    --main-bg: #f8fafc;
+    --accent-color: #6366f1;
+    --accent-gradient: linear-gradient(135deg, #6366f1, #a855f7);
+    --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    --glass-effect: rgba(255, 255, 255, 0.8);
+}
+
+body {
+    background-color: var(--main-bg);
+    font-family: 'Outfit', sans-serif;
+    overflow-x: hidden;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 280px;
+    height: 100vh;
+    position: fixed;
+    background: var(--sidebar-bg);
+    color: white;
+    padding: 2rem 1.5rem;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.main-content {
+    margin-left: 280px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link-side {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin-bottom: 8px;
+    color: #94a3b8;
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.nav-link-side:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link-side.active {
+    background: var(--accent-gradient);
+    color: white;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+}
+
+.nav-link-side i {
+    font-size: 1.25rem;
+    margin-right: 15px;
+}
+
+/* Card Styling */
+.stat-card {
+    background: white;
+    border: none;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 80px;
+    background: var(--accent-gradient);
+    opacity: 0.1;
+    border-radius: 0 0 0 100%;
+}
+
+.btn-brand {
+    background: var(--accent-gradient);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 14px;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-brand:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 20px -5px rgba(99, 102, 241, 0.4);
+    color: white;
+}
+
+.table-brand {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+}
+
+.table-brand thead th {
+    background: #f1f5f9;
+    color: #475569;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 1.25rem 1.5rem;
+    border: none;
+}
+
+.table-brand td {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.form-input-brand {
+    background: #f1f5f9;
+    border: 2px solid transparent;
+    padding: 12px 18px;
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+.form-input-brand:focus {
+    background: white;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.status-badge {
+    padding: 6px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.badge-confirm {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.badge-cancel {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+@media (max-width: 991px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 0;
+        padding: 0;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+        width: 280px;
+        padding: 2rem 1.5rem;
+    }
+}
+
+.animate-up {
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

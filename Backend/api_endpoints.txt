@@ -1,0 +1,97 @@
+# Course Enrollment System API Endpoints
+
+Base URL: `http://localhost:8080/api`
+
+## 1. Students
+- **Register Student**
+  - Path: `POST /students/register`
+  - Body:
+    ```json
+    {
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "phone": "9876543210"
+    }
+    ```
+- **List All Students**
+  - Path: `GET /students/all`
+- **Get Student by ID**
+  - Path: `GET /students/{id}`
+- **Update Student**
+  - Path: `PUT /students/{id}`
+  - Body:
+    ```json
+    {
+      "name": "John Updated",
+      "email": "john.updated@example.com",
+      "phone": "9876543211"
+    }
+    ```
+- **Delete Student**
+  - Path: `DELETE /students/{id}`
+- **Search Students**
+  - Path: `GET /students/search?keyword=john`
+
+## 2. Courses
+- **Add Course**
+  - Path: `POST /courses/add`
+  - Body:
+    ```json
+    {
+      "courseNumber": "CS-101",
+      "origin": "Introduction to Programming",
+      "destination": "Dr. Smith",
+      "departureTime": "2024-03-01T10:00:00",
+      "totalSeats": 30,
+      "price": 500.0
+    }
+    ```
+- **List All Courses**
+  - Path: `GET /courses/all`
+- **Get Course by Course Number**
+  - Path: `GET /courses/{courseNumber}`
+- **Get Course by ID**
+  - Path: `GET /courses/id/{id}`
+- **Update Course**
+  - Path: `PUT /courses/{id}`
+  - Body: Same as Add Course
+- **Delete Course** (only if no students enrolled)
+  - Path: `DELETE /courses/{id}`
+- **Search Courses**
+  - Path: `GET /courses/search?keyword=programming`
+
+## 3. Enrollments
+- **Enroll Student**
+  - Path: `POST /enrollments/enroll`
+  - Body:
+    ```json
+    {
+      "studentId": "65e1abd...",
+      "courseNumber": "CS-101",
+      "passengerName": "Alice Smith"
+    }
+    ```
+- **Withdraw Student (Cancel Enrollment)**
+  - Path: `POST /enrollments/cancel/{enrollmentId}`
+- **List All Enrollments**
+  - Path: `GET /enrollments/all`
+- **Get Enrollments by Student**
+  - Path: `GET /enrollments/student/{studentId}`
+- **Get Enrollments by Course**
+  - Path: `GET /enrollments/stats/{courseId}`
+
+## Standard Response Format
+```json
+{
+  "success": true,
+  "message": "Operation successful",
+  "data": { ... }
+}
+```
+
+## Business Rules
+- Students cannot be enrolled in the same course twice
+- Courses with enrolled students cannot be deleted
+- Course capacity cannot be reduced below current enrollment count
+- Email addresses must be unique per student
+- Course numbers must be unique
