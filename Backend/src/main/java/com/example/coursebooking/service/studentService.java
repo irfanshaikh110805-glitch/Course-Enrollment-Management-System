@@ -53,6 +53,6 @@ public class studentService {
     }
 
     public List<student> searchstudents(String keyword) {
-        return studentRepository.findByNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword);
+        return studentRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCase(keyword, keyword, keyword);
     }
 }

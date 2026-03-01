@@ -6,7 +6,7 @@ const courses = () => {
     const [courses, setcourses] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editingCourse, setEditingCourse] = useState(null);
-    const [formData, setFormData] = useState({ courseNumber: '', origin: '', destination: '', departureTime: '', totalSeats: 30, price: 0 });
+    const [formData, setFormData] = useState({ courseCode: '', courseName: '', description: '', startDate: '', maxCapacity: 30, fees: 0, duration: 1 });
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -29,29 +29,54 @@ const courses = () => {
         setLoading(true);
         setError(null);
         try {
+            // Convert string values to proper types
+            const payload = {
+                courseCode: formData.courseCode,
+                courseName: formData.courseName,
+                description: formData.description,
+                startDate: formData.startDate,
+                maxCapacity: parseInt(formData.maxCapacity),
+                fees: parseFloat(formData.fees),
+                duration: parseInt(formData.duration) || 1
+            };
+            console.log('Sending payload:', JSON.stringify(payload, null, 2));
+            
             if (editingCourse) {
-                await courseService.update(editingCourse.id, formData);
+                await courseService.update(editingCourse.id, payload);
             } else {
-                await courseService.add(formData);
+                await courseService.add(payload);
             }
             setShowModal(false);
-            setFormData({ courseNumber: '', origin: '', destination: '', departureTime: '', totalSeats: 30, price: 0 });
+            setFormData({ courseCode: '', courseName: '', description: '', startDate: '', maxCapacity: 30, fees: 0, duration: 1 });
             setEditingCourse(null);
             fetchcourses();
-        } catch (err) { setError(err.response?.data?.message || err.message); }
+        } catch (err) { 
+            console.error('Full error:', err);
+            console.error('Error response:', JSON.stringify(err.response?.data, null, 2));
+            // Handle validation errors
+            if (err.response?.data?.data && typeof err.response.data.data === 'object') {
+                const validationErrors = Object.entries(err.response.data.data)
+                    .map(([field, msg]) => `${field}: ${msg}`)
+                    .join(', ');
+                setError(validationErrors);
+            } else {
+                setError(err.response?.data?.message || err.message);
+            }
+        }
         finally { setLoading(false); }
     };
 
     const handleEdit = (course) => {
         setEditingCourse(course);
-        const formattedTime = course.departureTime ? new Date(course.departureTime).toISOString().slice(0, 16) : '';
+        const formattedTime = course.startDate ? new Date(course.startDate).toISOString().slice(0, 16) : '';
         setFormData({
-            courseNumber: course.courseNumber,
-            origin: course.origin,
-            destination: course.destination,
-            departureTime: formattedTime,
-            totalSeats: course.totalSeats,
-            price: course.price
+            courseCode: course.courseCode || course.courseNumber,
+            courseName: course.courseName || course.origin,
+            description: course.description || course.destination,
+            startDate: formattedTime,
+            maxCapacity: course.maxCapacity || course.totalSeats,
+            fees: course.fees || course.price,
+            duration: course.duration || 1
         });
         setShowModal(true);
     };
@@ -81,7 +106,7 @@ const courses = () => {
     const handleModalClose = () => {
         setShowModal(false);
         setEditingCourse(null);
-        setFormData({ courseNumber: '', origin: '', destination: '', departureTime: '', totalSeats: 30, price: 0 });
+        setFormData({ courseCode: '', courseName: '', description: '', startDate: '', maxCapacity: 30, fees: 0, duration: 1 });
         setError(null);
     };
 
@@ -186,7 +211,7 @@ const courses = () => {
                             <Form.Label className="text-muted small fw-bold text-uppercase">Course Code</Form.Label>
                             <Form.Control
                                 type="text" placeholder="e.g. CS-101" className="form-input-brand shadow-none"
-                                value={formData.courseNumber} onChange={e => setFormData({ ...formData, courseNumber: e.target.value.toUpperCase() })}
+                                value={formData.courseCode} onChange={e => setFormData({ ...formData, courseCode: e.target.value.toUpperCase() })}
                                 required
                             />
                         </Form.Group>
@@ -196,7 +221,7 @@ const courses = () => {
                                     <Form.Label className="text-muted small fw-bold text-uppercase">Course Name</Form.Label>
                                     <Form.Control
                                         type="text" placeholder="e.g. Introduction to Programming" className="form-input-brand shadow-none"
-                                        value={formData.origin} onChange={e => setFormData({ ...formData, origin: e.target.value })}
+                                        value={formData.courseName} onChange={e => setFormData({ ...formData, courseName: e.target.value })}
                                         required
                                     />
                                 </Form.Group>
@@ -206,7 +231,7 @@ const courses = () => {
                                     <Form.Label className="text-muted small fw-bold text-uppercase">Instructor</Form.Label>
                                     <Form.Control
                                         type="text" placeholder="e.g. Dr. Smith" className="form-input-brand shadow-none"
-                                        value={formData.destination} onChange={e => setFormData({ ...formData, destination: e.target.value })}
+                                        value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })}
                                         required
                                     />
                                 </Form.Group>
@@ -216,27 +241,38 @@ const courses = () => {
                             <Form.Label className="text-muted small fw-bold text-uppercase">Start Date & Time</Form.Label>
                             <Form.Control
                                 type="datetime-local" className="form-input-brand shadow-none"
-                                value={formData.departureTime} onChange={e => setFormData({ ...formData, departureTime: e.target.value })}
+                                value={formData.startDate} onChange={e => setFormData({ ...formData, startDate: e.target.value })}
                                 required
                             />
                         </Form.Group>
                         <Row>
-                            <Col md={6}>
+                            <Col md={4}>
                                 <Form.Group className="mb-3">
-                                    <Form.Label className="text-muted small fw-bold text-uppercase">Max Students</Form.Label>
+                                    <Form.Label className="text-muted small fw-bold text-uppercase">Duration (weeks)</Form.Label>
                                     <Form.Control
                                         type="number" className="form-input-brand shadow-none"
-                                        value={formData.totalSeats} onChange={e => setFormData({ ...formData, totalSeats: e.target.value })}
+                                        value={formData.duration} onChange={e => setFormData({ ...formData, duration: e.target.value })}
+                                        min="1"
                                         required
                                     />
                                 </Form.Group>
                             </Col>
-                            <Col md={6}>
+                            <Col md={4}>
+                                <Form.Group className="mb-3">
+                                    <Form.Label className="text-muted small fw-bold text-uppercase">Max Students</Form.Label>
+                                    <Form.Control
+                                        type="number" className="form-input-brand shadow-none"
+                                        value={formData.maxCapacity} onChange={e => setFormData({ ...formData, maxCapacity: e.target.value })}
+                                        required
+                                    />
+                                </Form.Group>
+                            </Col>
+                            <Col md={4}>
                                 <Form.Group className="mb-3">
                                     <Form.Label className="text-muted small fw-bold text-uppercase">Course Fee ($)</Form.Label>
                                     <Form.Control
                                         type="number" step="0.01" className="form-input-brand shadow-none"
-                                        value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })}
+                                        value={formData.fees} onChange={e => setFormData({ ...formData, fees: e.target.value })}
                                         required
                                     />
                                 </Form.Group>

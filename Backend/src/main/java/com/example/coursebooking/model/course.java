@@ -108,7 +108,7 @@ public class course {
     }
 
     public int getAvailableSeats() {
-        return availableSeats;
+        return availableSeats > 0 ? availableSeats : maxCapacity;
     }
 
     public void setAvailableSeats(int availableSeats) {
@@ -177,6 +177,9 @@ public class course {
     public void setMaxCapacity(int maxCapacity) {
         this.maxCapacity = maxCapacity;
         this.totalSeats = maxCapacity;
+        if (this.availableSeats == 0) {
+            this.availableSeats = maxCapacity;
+        }
     }
 
     public LocalDateTime getStartDate() {

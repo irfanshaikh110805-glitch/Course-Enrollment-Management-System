@@ -67,7 +67,11 @@ const students = () => {
         try {
             const res = await studentService.search(searchTerm);
             setstudents(res.data.data || []);
-        } catch (err) { console.error(err); }
+        } catch (err) { 
+            console.error('Search error:', err);
+            console.error('Error response:', JSON.stringify(err.response?.data, null, 2));
+            alert('Search failed: ' + (err.response?.data?.message || err.message));
+        }
     };
 
     const handleModalClose = () => {

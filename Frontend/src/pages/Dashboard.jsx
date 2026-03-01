@@ -37,10 +37,7 @@ const Dashboard = () => {
                     <p className="text-muted small">Real-time status of your course enrollment system</p>
                 </div>
                 <div className="d-flex gap-2">
-                    <div className="p-2 bg-white rounded shadow-sm text-center" style={{ width: '100px' }}>
-                        <h6 className="small text-muted mb-0">Uptime</h6>
-                        <span className="fw-bold text-success">99.9%</span>
-                    </div>
+                   
                 </div>
             </header>
 
